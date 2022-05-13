@@ -6,7 +6,8 @@ import { MoreOutlined } from "@ant-design/icons";
 import "./index.css";
 const App = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [error, setError] = useState()
+  const [error, setError] = useState();
+  const [q, setQ] = useState("");
   const [editingUser, setEditingUser] = useState(null);
   const [dataSource, setDataSource] = useState([
     {
@@ -120,6 +121,7 @@ const App = () => {
     setIsModalVisible(false);
     setEditingUser(null);
   };
+  
   const onAddUser = () => {
     const randomNumber = parseInt(Math.random() * 1000);
     if (nameRef.current.value !== null && emailRef.current.value) {
@@ -129,21 +131,29 @@ const App = () => {
         email: emailRef.current.value,
       };
       setDataSource((pre) => [...pre, newUser]);
-      setError("")
-    }else{
-      setError("butun xanalari doldurun")
+      setError("");
+    } else {
+      setError("butun xanalari doldurun");
     }
   };
+
+  function search(rows) {
+    const columns= rows[0] && Object.keys(rows[0]);
+    return rows.filter((row) =>
+    columns.some((column)=>row[column].toString().toLowerCase().indexOf(q.toLowerCase()) > -1)
+    );
+  }
+
   return (
     <div style={{ margin: "50px" }}>
+       <input type="text" value={q} onChange={(e) => setQ(e.target.value)}  placeholder="search.."/>
       <div>
-        <label className="text-danger">{error?error:""}</label>
+        <label className="text-danger">{error ? error : ""}</label>
         <input type="text" placeholder="name" ref={nameRef} />
         <input type="text" placeholder="email" ref={emailRef} />
         <button onClick={onAddUser}>add user</button>
       </div>
-
-      <Table columns={columns} dataSource={dataSource}></Table>
+      <Table columns={columns} dataSource={search(dataSource)}></Table>
       <Modal
         title="Basic Modal"
         visible={isModalVisible}
