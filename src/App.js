@@ -79,8 +79,7 @@ const App = () => {
       okText: "Yes",
       okType: "danger",
       onOk: () => {
-        let usr = dataSource.filter((user) => user.key !== record.key);
-        setDataSource(usr);
+        setDataSource(dataSource.filter((user) => user.key !== record.key));
       },
     });
   };
@@ -106,22 +105,16 @@ const App = () => {
 
   const handleOk = () => {
     setIsModalVisible(false);
-    setDataSource((pre) => {
-      return pre.map((user) => {
-        if (user.key === editingUser.key) {
-          return editingUser;
-        } else {
-          return user;
-        }
-      });
-    });
+    setDataSource((pre) =>
+      pre.map((user) => (user.key === editingUser.key ? editingUser : user))
+    );
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
     setEditingUser(null);
   };
-  
+
   const onAddUser = () => {
     const randomNumber = parseInt(Math.random() * 1000);
     if (nameRef.current.value !== null && emailRef.current.value) {
@@ -138,15 +131,23 @@ const App = () => {
   };
 
   function search(rows) {
-    const columns= rows[0] && Object.keys(rows[0]);
+    const columns = rows[0] && Object.keys(rows[0]);
     return rows.filter((row) =>
-    columns.some((column)=>row[column].toString().toLowerCase().indexOf(q.toLowerCase()) > -1)
+      columns.some(
+        (column) =>
+          row[column].toString().toLowerCase().indexOf(q.toLowerCase()) > -1
+      )
     );
   }
 
   return (
     <div style={{ margin: "50px" }}>
-       <input type="text" value={q} onChange={(e) => setQ(e.target.value)}  placeholder="search.."/>
+      <input
+        type="text"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="search.."
+      />
       <div>
         <label className="text-danger">{error ? error : ""}</label>
         <input type="text" placeholder="name" ref={nameRef} />
